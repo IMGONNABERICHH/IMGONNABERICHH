@@ -1,0 +1,43 @@
+name: SPCX Price Monitor
+
+on:
+  schedule:
+    # Every 5 minutes, 24/7 — script exits cleanly when market is closed
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  check-price:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Check SPCX price and sell if target hit
+        id: monitor
+        env:
+          RH_USERNAME: ${{ secrets.RH_USERNAME }}
+          RH_PASSWORD: ${{ secrets.RH_PASSWORD }}
+          RH_MFA_CODE: ${{ secrets.RH_MFA_CODE }}
+        run: |
+          python monitor_spcx.py | tee /tmp/monitor_output.txt
+          echo "sold=$(grep -c 'SELL TRIGGERED' /tmp/monitor_output.txt || true)" >> $GITHUB_OUTPUT
+
+      - name: Disable workflow after sell
+        if: steps.monitor.outputs.sold != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow disable spcx_monitor.yml
+          echo "Sell executed — workflow disabled."

@@ -1,0 +1,2 @@
+robin-stocks>=2.1.0
+pyotp>=2.9.0
