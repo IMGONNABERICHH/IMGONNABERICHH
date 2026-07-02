@@ -1,13 +1,13 @@
-name: SPCX Price Monitor
+name: Agentic Account Morning Monitor
 
 on:
   schedule:
-    # Every 5 minutes, 24/7 — script exits cleanly when market is closed
+    # Every 5 minutes during market hours — script exits cleanly when market is closed
     - cron: "*/5 * * * *"
   workflow_dispatch:
 
 jobs:
-  check-price:
+  monitor:
     runs-on: ubuntu-latest
     timeout-minutes: 3
 
@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Check SPCX price and sell if target hit
+      - name: Monitor prices and sell on trigger
         id: monitor
         env:
           RH_USERNAME: ${{ secrets.RH_USERNAME }}
@@ -32,12 +32,12 @@ jobs:
           RH_MFA_CODE: ${{ secrets.RH_MFA_CODE }}
         run: |
           python monitor_spcx.py | tee /tmp/monitor_output.txt
-          echo "sold=$(grep -c 'SELL TRIGGERED' /tmp/monitor_output.txt || true)" >> $GITHUB_OUTPUT
+          echo "all_sold=$(grep -c 'ALL POSITIONS SOLD' /tmp/monitor_output.txt || true)" >> $GITHUB_OUTPUT
 
-      - name: Disable workflow after sell
-        if: steps.monitor.outputs.sold != '0'
+      - name: Disable workflow after all positions sold
+        if: steps.monitor.outputs.all_sold != '0'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh workflow disable spcx_monitor.yml
-          echo "Sell executed — workflow disabled."
+          echo "All positions sold — workflow disabled."

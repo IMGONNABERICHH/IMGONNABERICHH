@@ -3,10 +3,15 @@
 Account: 903261667
 Approach: Option B — always wait for pullback entry, never chase.
 
-## Active Positions / Orders
+## Active Positions / Orders (Agentic Account 903261667)
 
-- **SPCX**: 0.127559 shares — sell at market when `last_trade_price >= $187`
-- **JOBY**: GTC limit buy, 1 share @ **$8.55** — queued, order id `6a4423a5`
+- **SPCX**: 0.127559 shares, avg cost $156.79
+  - Goal: sell at $187 if hit before 10:30am ET
+  - Exit: sell at market if goal not hit by 10:30am OR price < prev close (downtrend)
+- **JOBY**: 1 share, avg cost $9.29 (filled)
+  - Goal: sell at $9.29 break-even
+  - Exit: sell at market if not hit by 10:30am OR price < prev close (downtrend)
+- Both monitored by GitHub Actions workflow (`spcx_monitor.yml`) every 5 minutes
 
 ## Chain Logic
 
@@ -37,7 +42,7 @@ RKLB, ASTS, KTOS, RIVN, NVDA, ACHR, JOBY, AUR
 
 ## Notes
 
-- GitHub Actions workflow (`.github/workflows/spcx_monitor.yml`) independently
-  monitors SPCX for the $187 sell trigger, as a session-independent backstop.
+- GitHub Actions workflow (`.github/workflows/spcx_monitor.yml`) monitors both
+  SPCX and JOBY every 5 minutes; disables itself once all positions are sold.
 - This file is the durable source of truth for the chain — update it whenever
   the active position, queued order, or milestone progress changes.
