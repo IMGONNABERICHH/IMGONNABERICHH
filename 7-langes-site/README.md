@@ -37,6 +37,27 @@ from the template was never replaced with a real form ID. Every inquiry submitte
 since launch went nowhere. It now goes through Netlify Forms alongside the
 booking form, so both land in the same place.
 
+## If you'd rather use Formspree
+
+Netlify Forms is the default because your site already runs on Netlify and it
+needs no account. If you want Formspree instead — you may already have one set up
+— sign in at [formspree.io](https://formspree.io), create a form, and copy the ID
+out of the endpoint they hand you (`https://formspree.io/f/`**`abcdwxyz`**).
+
+Then set one line in `index.html`, just above the submission code:
+
+```js
+const FORMSPREE_ID = 'abcdwxyz';   // empty = use Netlify Forms
+```
+
+That is the whole switch, and it moves **both** forms at once. The two services
+disagree on three field names — subject is `subject` on Netlify and `_subject` on
+Formspree, the honeypot is `bot-field` versus `_gotcha`, and `form-name` is
+Netlify routing that Formspree has no use for — so the page rewrites them at load
+time. You do not have to touch the markup.
+
+Leave it empty and nothing changes: Netlify Forms stays in charge.
+
 ## What a client sees
 
 A four-step flow on the new **Book** page:

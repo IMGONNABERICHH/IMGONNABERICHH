@@ -1966,19 +1966,48 @@
       scrollToStep(el('step-type'));
     }
 
+    /* ─── Where submissions go ───
+       Left empty, both forms post to Netlify Forms — already wired up, and
+       nothing to sign up for. Paste a Formspree form ID here (the part after
+       /f/ in the endpoint they give you) and both forms post there instead.
+       Nothing else needs changing: the field renaming below is handled for you. */
+    const FORMSPREE_ID = '';
+
     /* ─── Submission ───
-       Posted straight to Netlify Forms, so the confirmation stays in-page
-       instead of bouncing the visitor to a generic success screen. */
+       Posted over fetch either way, so the confirmation stays in-page instead
+       of bouncing the visitor to a generic success screen. */
+    const endpointFor = form => FORMSPREE_ID
+      ? 'https://formspree.io/f/' + FORMSPREE_ID
+      : (form.getAttribute('action') || '/');
+
     function postForm(form) {
-      return fetch(form.getAttribute('action') || '/', {
+      return fetch(endpointFor(form), {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',      // Formspree returns JSON instead of redirecting
+        },
         body: new URLSearchParams(new FormData(form)).toString(),
       }).then(res => {
         if (!res.ok) throw new Error('Submission failed (' + res.status + ')');
         return res;
       });
     }
+
+    /* The two services spell the same three things differently. Rather than make
+       that your problem, translate the markup once at boot when Formspree is on:
+       its subject key is _subject, its honeypot is _gotcha, and form-name is
+       Netlify routing that Formspree has no use for. */
+    (function adaptForms() {
+      if (!FORMSPREE_ID) return;
+      for (const form of document.querySelectorAll('#booking-form, #inquiry-form')) {
+        form.removeAttribute('data-netlify');
+        form.removeAttribute('netlify-honeypot');
+        form.querySelectorAll('[name="form-name"]').forEach(n => n.remove());
+        form.querySelectorAll('[name="subject"]').forEach(n => { n.name = '_subject'; });
+        form.querySelectorAll('[name="bot-field"]').forEach(n => { n.name = '_gotcha'; });
+      }
+    })();
 
     const failLine = 'That didn’t send. Please try once more — or reach us on Instagram ' +
       '<a href="https://www.instagram.com/7langes.la" target="_blank" rel="noopener" ' +
