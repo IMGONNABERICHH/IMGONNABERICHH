@@ -1,0 +1,2078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>7 L'ANGES — Creative Media Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --black: #080808;
+      --white: #ece8e1;
+      --gray: #555;
+      --dim: #333;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Inter', system-ui, sans-serif;
+    }
+
+    html, body {
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--sans);
+      font-size: 14px;
+      line-height: 1.6;
+      letter-spacing: 0.02em;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Film grain */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      opacity: 0.04;
+      pointer-events: none;
+      z-index: 9999;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+    }
+
+    /* Lining numerals everywhere the brand name appears —
+       Cormorant's old-style 7 dips below the baseline otherwise */
+    .lining { font-feature-settings: 'lnum' 1; font-variant-numeric: lining-nums; }
+
+    /* ─── NAVIGATION ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 32px 52px;
+    }
+
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 17px;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--white);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .nav-logo .seven,
+    .home-title .seven {
+      font-feature-settings: 'lnum' 1;
+      font-variant-numeric: lining-nums;
+      position: relative;
+      top: -0.045em; /* precise baseline correction so the 7 sits level with the letters */
+      display: inline-block;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 44px;
+      list-style: none;
+    }
+
+    .nav-links li span {
+      font-family: var(--sans);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gray);
+      cursor: pointer;
+      padding-bottom: 2px;
+      border-bottom: 1px solid transparent;
+      transition: color 0.3s, border-color 0.3s;
+    }
+
+    .nav-links li span:hover,
+    .nav-links li span.active {
+      color: var(--white);
+      border-bottom-color: rgba(236,232,225,0.3);
+    }
+
+    /* ─── PAGE SYSTEM ─── */
+    .page {
+      display: none;
+      min-height: 100vh;
+      animation: fadeIn 0.55s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .page.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ══════════════════════════════════════════
+       HOME
+    ══════════════════════════════════════════ */
+    /* The layout hangs off .active rather than #home itself: an id outranks
+       .page on specificity, so a `display` here would keep the hero on screen
+       underneath every other page. */
+    #home {
+      position: relative;
+      height: 100vh;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 52px 60px;
+      overflow: hidden;
+    }
+
+    #home.active { display: flex; }
+
+    .home-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 65% 40%, rgba(25,18,8,0.9) 0%, transparent 65%),
+        linear-gradient(160deg, #0a0806 0%, #060606 100%);
+    }
+
+    .home-bg-img {
+      position: absolute;
+      inset: 0;
+      background: url('https://cdn.myportfolio.com/84e825b2-1e35-4699-8c80-d1ab0c0e7cad/ba67b094-303f-4f4b-a14b-c739d759c19c_rwc_0x0x3413x2560x4096.png?h=5ce683b4d6be821d4f99a8366cac2f03') center/cover no-repeat;
+      opacity: 0.09;
+      filter: grayscale(100%) contrast(1.3) brightness(0.8);
+    }
+
+    .home-vignette {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 100%, rgba(0,0,0,0.9) 0%, transparent 60%),
+        radial-gradient(ellipse at 0% 0%, rgba(0,0,0,0.6) 0%, transparent 50%);
+    }
+
+    .home-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .home-eyebrow {
+      font-family: var(--sans);
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 16px;
+    }
+
+    /* One line, every letter evenly distributed edge to edge.
+       The whole masthead is the parallax element. */
+    .home-title {
+      font-family: var(--serif);
+      font-size: clamp(56px, 10.5vw, 150px);
+      font-weight: 300;
+      line-height: 1;
+      color: var(--white);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      width: 100%;
+      will-change: transform;
+    }
+
+    .home-title span { display: inline-block; }
+
+    .home-title .italic {
+      font-style: italic;
+      color: rgba(236,232,225,0.4);
+    }
+
+    .home-bottom {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: 52px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .home-tagline {
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: rgba(236,232,225,0.35);
+      text-transform: uppercase;
+      max-width: 300px;
+      line-height: 1.9;
+    }
+
+    .home-cta {
+      font-family: var(--sans);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gray);
+      cursor: pointer;
+      transition: color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .home-cta::after {
+      content: '→';
+      transition: transform 0.3s;
+    }
+
+    .home-cta:hover { color: var(--white); }
+    .home-cta:hover::after { transform: translateX(4px); }
+
+    /* ══════════════════════════════════════════
+       WORK
+    ══════════════════════════════════════════ */
+    #work {
+      padding: 130px 52px 80px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 52px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .section-title {
+      font-family: var(--serif);
+      font-size: 44px;
+      font-weight: 300;
+      letter-spacing: -0.01em;
+    }
+
+    .section-meta {
+      font-family: var(--sans);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--gray);
+      text-transform: uppercase;
+    }
+
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 3px;
+    }
+
+    .work-item {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background: #0f0f0f;
+    }
+
+    .work-item:nth-child(1) { grid-column: span 8; aspect-ratio: 16/9; }
+    .work-item:nth-child(2) { grid-column: span 4; aspect-ratio: 4/5; }
+    .work-item:nth-child(3) { grid-column: span 4; aspect-ratio: 4/5; }
+    .work-item:nth-child(4) { grid-column: span 4; aspect-ratio: 4/5; }
+    .work-item:nth-child(5) { grid-column: span 4; aspect-ratio: 4/5; }
+    .work-item:nth-child(6) { grid-column: span 8; aspect-ratio: 16/9; }
+    .work-item:nth-child(7) { grid-column: span 4; aspect-ratio: 4/5; }
+    .work-item:nth-child(8) { grid-column: span 12; aspect-ratio: 21/8; }
+
+    .work-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.9s cubic-bezier(0.16,1,0.3,1);
+      filter: contrast(1.04) brightness(0.92);
+    }
+
+    .work-item::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 45%);
+      pointer-events: none;
+    }
+
+    .work-item:hover .work-bg {
+      transform: scale(1.06);
+      filter: contrast(1.04) brightness(1);
+    }
+
+    .work-meta {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      z-index: 2;
+      padding: 20px 24px;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
+      transform: translateY(8px);
+      opacity: 0;
+      transition: opacity 0.4s, transform 0.4s;
+    }
+
+    .work-item:hover .work-meta {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .work-cat {
+      font-family: var(--sans);
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(236,232,225,0.4);
+      margin-bottom: 5px;
+    }
+
+    .work-title {
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1.2;
+    }
+
+    .work-yr {
+      font-family: var(--sans);
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      color: var(--gray);
+      margin-top: 4px;
+    }
+
+    .work-index {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      z-index: 2;
+      font-family: var(--serif);
+      font-size: 11px;
+      color: rgba(255,255,255,0.35);
+      font-style: italic;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.8);
+    }
+
+    /* ─── LIGHTBOX ─── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(4,4,4,0.94);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 5vh 5vw;
+    }
+
+    .lightbox.open { display: flex; animation: fadeIn 0.35s ease forwards; }
+
+    .lightbox-frame {
+      width: min(1200px, 90vw);
+      aspect-ratio: 16/9;
+      background: #000;
+      box-shadow: 0 30px 120px rgba(0,0,0,0.8);
+    }
+
+    .lightbox-frame iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 28px;
+      right: 44px;
+      font-family: var(--sans);
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(236,232,225,0.5);
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .lightbox-close:hover { color: var(--white); }
+
+    /* ══════════════════════════════════════════
+       ABOUT / STUDIO
+    ══════════════════════════════════════════ */
+    #about {
+      padding: 130px 52px 100px;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.8fr;
+      gap: 100px;
+      margin-top: 60px;
+    }
+
+    .about-sticky {
+      position: sticky;
+      top: 120px;
+      align-self: start;
+    }
+
+    .about-kicker {
+      font-family: var(--sans);
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 20px;
+    }
+
+    .about-headline {
+      font-family: var(--serif);
+      font-size: clamp(30px, 3.5vw, 44px);
+      font-weight: 300;
+      line-height: 1.2;
+      color: var(--white);
+    }
+
+    .about-headline em {
+      font-style: italic;
+      color: rgba(236,232,225,0.38);
+    }
+
+    .about-divider {
+      width: 32px;
+      height: 1px;
+      background: rgba(255,255,255,0.12);
+      margin: 32px 0;
+    }
+
+    .about-stats {
+      display: flex;
+      gap: 32px;
+    }
+
+    .stat-val {
+      font-family: var(--serif);
+      font-size: 38px;
+      font-weight: 300;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    .stat-lbl {
+      font-family: var(--sans);
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-top: 6px;
+    }
+
+    .about-body-col p {
+      font-family: var(--sans);
+      font-size: 13px;
+      line-height: 2;
+      color: #686868;
+      margin-bottom: 28px;
+    }
+
+    .about-body-col p strong {
+      color: rgba(236,232,225,0.85);
+      font-weight: 400;
+    }
+
+    .services {
+      margin-top: 52px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .svc-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      cursor: default;
+      transition: padding-left 0.3s;
+    }
+
+    .svc-row:hover { padding-left: 8px; }
+
+    .svc-name {
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(236,232,225,0.7);
+    }
+
+    .svc-num {
+      font-family: var(--serif);
+      font-size: 12px;
+      color: var(--gray);
+      font-style: italic;
+    }
+
+    /* ══════════════════════════════════════════
+       CONTACT
+    ══════════════════════════════════════════ */
+    #contact {
+      padding: 130px 52px 100px;
+      max-width: 920px;
+    }
+
+    .contact-intro {
+      font-family: var(--serif);
+      font-size: clamp(24px, 3vw, 36px);
+      font-weight: 300;
+      line-height: 1.4;
+      color: var(--white);
+      margin: 44px 0 0;
+      max-width: 600px;
+    }
+
+    .contact-intro em {
+      font-style: italic;
+      color: rgba(236,232,225,0.38);
+    }
+
+    .contact-rule {
+      margin: 40px 0;
+      padding: 20px 0;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .contact-rule-text {
+      font-family: var(--sans);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    .contact-rule-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+
+    .form-group { display: flex; flex-direction: column; }
+    .form-group.full { grid-column: 1 / -1; }
+
+    .form-label {
+      font-family: var(--sans);
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 12px;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 10px 0 12px;
+      color: var(--white);
+      font-family: var(--sans);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      outline: none;
+      transition: border-color 0.3s;
+      -webkit-appearance: none;
+      border-radius: 0;
+    }
+
+    .form-select { cursor: pointer; }
+    .form-select option { background: #111; color: var(--white); }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-bottom-color: rgba(236,232,225,0.45);
+    }
+
+    .form-input::placeholder,
+    .form-textarea::placeholder {
+      color: rgba(255,255,255,0.18);
+    }
+
+    .form-textarea {
+      resize: none;
+      height: 90px;
+      line-height: 1.8;
+    }
+
+    .form-submit {
+      margin-top: 52px;
+      display: inline-flex;
+      align-items: center;
+      gap: 18px;
+      background: var(--white);
+      color: #080808;
+      border: none;
+      padding: 19px 44px;
+      font-family: var(--sans);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.3s, gap 0.3s;
+    }
+
+    .form-submit:hover {
+      background: #d6d2cb;
+      gap: 26px;
+    }
+
+    /* ══════════════════════════════════════════
+       BOOKING
+    ══════════════════════════════════════════ */
+    #book {
+      padding: 130px 52px 140px;
+      max-width: 1080px;
+    }
+
+    .bk-intro {
+      font-family: var(--serif);
+      font-size: clamp(24px, 3vw, 36px);
+      font-weight: 300;
+      line-height: 1.4;
+      color: var(--white);
+      margin: 44px 0 0;
+      max-width: 640px;
+    }
+
+    .bk-intro em {
+      font-style: italic;
+      color: rgba(236,232,225,0.38);
+    }
+
+    /* Each stage of the flow. Locked stages stay visible but inert, so the
+       whole shape of the booking is legible before the first click. */
+    .bk-step {
+      margin-top: 56px;
+      padding-top: 34px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      transition: opacity 0.5s;
+    }
+
+    .bk-step.locked {
+      opacity: 0.22;
+      pointer-events: none;
+      filter: saturate(0);
+    }
+
+    .bk-step-head {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+
+    .bk-step-num {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 12px;
+      color: var(--gray);
+      font-feature-settings: 'lnum' 1;
+      font-variant-numeric: lining-nums;
+    }
+
+    .bk-step-title {
+      font-family: var(--sans);
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(236,232,225,0.7);
+    }
+
+    .bk-step-hint {
+      font-family: var(--sans);
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-left: auto;
+    }
+
+    /* ─── 01 · Session type ─── */
+    .type-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .type-card {
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.09);
+      padding: 26px 28px 24px;
+      cursor: pointer;
+      background: transparent;
+      text-align: left;
+      color: inherit;
+      font: inherit;
+      transition: border-color 0.35s, background 0.35s, transform 0.35s;
+    }
+
+    .type-card:hover {
+      border-color: rgba(255,255,255,0.28);
+      background: rgba(255,255,255,0.015);
+      transform: translateY(-2px);
+    }
+
+    .type-card.sel {
+      border-color: rgba(236,232,225,0.55);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .type-card .t-num {
+      position: absolute;
+      top: 22px; right: 26px;
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 12px;
+      color: var(--gray);
+      font-feature-settings: 'lnum' 1;
+      font-variant-numeric: lining-nums;
+    }
+
+    .type-card .t-name {
+      font-family: var(--serif);
+      font-size: 24px;
+      font-weight: 300;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+
+    .type-card .t-desc {
+      font-family: var(--sans);
+      font-size: 12px;
+      line-height: 1.9;
+      color: #686868;
+      margin-bottom: 20px;
+      max-width: 34ch;
+    }
+
+    .type-card .t-foot {
+      display: flex;
+      gap: 22px;
+      align-items: center;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .type-card .t-meta {
+      font-family: var(--sans);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    .type-card .t-price {
+      margin-left: auto;
+      font-family: var(--sans);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(236,232,225,0.75);
+    }
+
+    /* ─── 02 · Date ─── */
+    .cal {
+      max-width: 460px;
+    }
+
+    .cal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+
+    .cal-month {
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--white);
+      letter-spacing: 0.06em;
+      font-feature-settings: 'lnum' 1;
+      font-variant-numeric: lining-nums;
+    }
+
+    .cal-arrows { display: flex; gap: 10px; }
+
+    .cal-arrow {
+      width: 30px; height: 30px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: transparent;
+      color: rgba(236,232,225,0.6);
+      font-size: 11px;
+      cursor: pointer;
+      transition: border-color 0.3s, color 0.3s;
+    }
+
+    .cal-arrow:hover:not(:disabled) {
+      border-color: rgba(255,255,255,0.35);
+      color: var(--white);
+    }
+
+    .cal-arrow:disabled { opacity: 0.2; cursor: default; }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .cal-dow {
+      font-family: var(--sans);
+      font-size: 8px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gray);
+      text-align: center;
+      padding-bottom: 10px;
+    }
+
+    .cal-day {
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      font-family: var(--sans);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      border: 1px solid transparent;
+      background: transparent;
+      color: rgba(236,232,225,0.75);
+      cursor: pointer;
+      transition: border-color 0.25s, background 0.25s, color 0.25s;
+    }
+
+    .cal-day.pad { pointer-events: none; }
+
+    .cal-day.off {
+      color: rgba(255,255,255,0.13);
+      cursor: default;
+      text-decoration: line-through;
+      text-decoration-color: rgba(255,255,255,0.1);
+    }
+
+    .cal-day.avail { border-color: rgba(255,255,255,0.09); }
+    .cal-day.avail:hover { border-color: rgba(255,255,255,0.4); color: var(--white); }
+
+    .cal-day.sel {
+      background: var(--white);
+      color: #080808;
+      border-color: var(--white);
+    }
+
+    .cal-legend {
+      display: flex;
+      gap: 22px;
+      margin-top: 22px;
+      font-family: var(--sans);
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    .cal-legend span { display: flex; align-items: center; gap: 8px; }
+    .cal-legend i {
+      width: 9px; height: 9px;
+      border: 1px solid rgba(255,255,255,0.25);
+      display: inline-block;
+    }
+    .cal-legend i.taken { border-color: rgba(255,255,255,0.08); background: rgba(255,255,255,0.03); }
+
+    /* ─── 03 · Time ─── */
+    .slot-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+      gap: 8px;
+      max-width: 620px;
+    }
+
+    .slot {
+      border: 1px solid rgba(255,255,255,0.09);
+      background: transparent;
+      color: rgba(236,232,225,0.75);
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      padding: 14px 6px;
+      cursor: pointer;
+      transition: border-color 0.25s, background 0.25s, color 0.25s;
+    }
+
+    .slot:hover { border-color: rgba(255,255,255,0.4); color: var(--white); }
+
+    .slot.sel {
+      background: var(--white);
+      color: #080808;
+      border-color: var(--white);
+    }
+
+    .bk-empty {
+      font-family: var(--sans);
+      font-size: 12px;
+      line-height: 1.9;
+      color: #686868;
+    }
+
+    /* ─── 04 · Details ─── */
+    .bk-form { max-width: 920px; }
+
+    /* Running summary of the choices made so far */
+    .bk-recap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 34px;
+      padding: 22px 26px;
+      margin-bottom: 42px;
+      border: 1px solid rgba(255,255,255,0.09);
+      background: rgba(255,255,255,0.015);
+    }
+
+    .bk-recap div { display: flex; flex-direction: column; gap: 6px; }
+
+    .bk-recap dt {
+      font-family: var(--sans);
+      font-size: 8px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    .bk-recap dd {
+      font-family: var(--serif);
+      font-size: 17px;
+      font-weight: 300;
+      color: var(--white);
+      font-feature-settings: 'lnum' 1;
+      font-variant-numeric: lining-nums;
+    }
+
+    .bk-recap .edit {
+      margin-left: auto;
+      align-self: center;
+      font-family: var(--sans);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gray);
+      cursor: pointer;
+      border-bottom: 1px solid transparent;
+      transition: color 0.3s, border-color 0.3s;
+    }
+
+    .bk-recap .edit:hover {
+      color: var(--white);
+      border-bottom-color: rgba(236,232,225,0.3);
+    }
+
+    .bk-fine {
+      font-family: var(--sans);
+      font-size: 11px;
+      line-height: 2;
+      color: #5c5c5c;
+      margin-top: 26px;
+      max-width: 60ch;
+    }
+
+    .bk-error {
+      display: none;
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      line-height: 1.9;
+      color: #c98b7a;
+      margin-top: 22px;
+    }
+
+    .bk-error.on { display: block; }
+
+    /* Honeypot — a field only a bot will fill in */
+    .bk-hp {
+      position: absolute;
+      left: -9999px;
+      opacity: 0;
+      height: 0;
+      overflow: hidden;
+    }
+
+    /* ─── Confirmation ─── */
+    .bk-confirm { display: none; padding-top: 30px; }
+    .bk-confirm.on { display: block; animation: fadeIn 0.6s cubic-bezier(0.16,1,0.3,1) forwards; }
+
+    .bk-confirm-mark {
+      font-family: var(--sans);
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 22px;
+    }
+
+    .bk-confirm h3 {
+      font-family: var(--serif);
+      font-size: clamp(28px, 3.4vw, 42px);
+      font-weight: 300;
+      line-height: 1.3;
+      color: var(--white);
+      margin-bottom: 26px;
+    }
+
+    .bk-confirm h3 em { font-style: italic; color: rgba(236,232,225,0.38); }
+
+    .bk-confirm p {
+      font-family: var(--sans);
+      font-size: 13px;
+      line-height: 2;
+      color: #686868;
+      max-width: 56ch;
+      margin-bottom: 22px;
+    }
+
+    .bk-confirm-actions {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+
+    .bk-link {
+      font-family: var(--sans);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(236,232,225,0.75);
+      text-decoration: none;
+      cursor: pointer;
+      padding-bottom: 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      transition: color 0.3s, border-color 0.3s;
+    }
+
+    .bk-link:hover { color: var(--white); border-bottom-color: rgba(236,232,225,0.5); }
+
+    /* Contact page cross-link to the booking flow */
+    .contact-alt {
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      line-height: 2;
+      color: #5c5c5c;
+      margin-top: 44px;
+    }
+
+    .contact-alt span {
+      color: rgba(236,232,225,0.8);
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-color: rgba(255,255,255,0.2);
+    }
+
+    .home-actions { display: flex; align-items: center; gap: 32px; }
+    .home-cta.secondary { color: var(--gray); }
+    .home-cta.secondary:hover { color: var(--white); }
+
+    /* ─── SOCIAL BAR ─── */
+    .social-bar {
+      position: fixed;
+      bottom: 32px;
+      right: 52px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      z-index: 100;
+    }
+
+    .social-bar a {
+      font-family: var(--sans);
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.22);
+      text-decoration: none;
+      transition: color 0.3s;
+      writing-mode: vertical-rl;
+    }
+
+    .social-bar a:hover { color: rgba(255,255,255,0.7); }
+
+    .footer-line {
+      position: fixed;
+      bottom: 32px;
+      left: 52px;
+      font-family: var(--sans);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.15);
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      nav { padding: 24px 28px; }
+      .nav-links { gap: 22px; }
+      #home, #work, #about, #contact, #book { padding-left: 28px; padding-right: 28px; }
+      .type-grid { grid-template-columns: 1fr; }
+      .bk-recap { gap: 14px 26px; }
+      .bk-recap .edit { margin-left: 0; align-self: flex-start; }
+      .work-grid { grid-template-columns: 1fr 1fr; }
+      .work-item:nth-child(1),
+      .work-item:nth-child(6),
+      .work-item:nth-child(8) { grid-column: 1 / -1; aspect-ratio: 16/9; }
+      .work-item:nth-child(2),
+      .work-item:nth-child(3),
+      .work-item:nth-child(4),
+      .work-item:nth-child(5),
+      .work-item:nth-child(7) { grid-column: span 1; }
+      .about-grid { grid-template-columns: 1fr; gap: 48px; }
+      .about-sticky { position: static; }
+      .form-row { grid-template-columns: 1fr; gap: 24px; }
+      .social-bar, .footer-line { display: none; }
+      .lightbox-close { top: 20px; right: 24px; }
+    }
+
+    @media (max-width: 560px) {
+      .home-bottom { flex-direction: column; gap: 20px; align-items: flex-start; }
+      .home-actions { gap: 24px; }
+      .work-grid { grid-template-columns: 1fr; }
+      .work-item { grid-column: 1 !important; aspect-ratio: 4/3 !important; }
+      .nav-links { gap: 16px; }
+      .nav-links li span { font-size: 9px; letter-spacing: 0.14em; }
+      #book { padding-top: 110px; }
+      .bk-step-hint { display: none; }
+      .slot-grid { grid-template-columns: repeat(auto-fill, minmax(94px, 1fr)); }
+      .cal-day { font-size: 11px; }
+      .type-card { padding: 22px 20px; }
+      .bk-confirm-actions { gap: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo" onclick="showPage('home')"><span class="seven">7</span> L'ANGES</div>
+    <ul class="nav-links">
+      <li><span onclick="showPage('work')" id="nav-work">Work</span></li>
+      <li><span onclick="showPage('about')" id="nav-about">Studio</span></li>
+      <li><span onclick="showPage('book')" id="nav-book">Book</span></li>
+      <li><span onclick="showPage('contact')" id="nav-contact">Contact</span></li>
+    </ul>
+  </nav>
+
+  <!-- HOME -->
+  <div class="page active" id="home">
+    <div class="home-bg"></div>
+    <div class="home-bg-img"></div>
+    <div class="home-vignette"></div>
+    <div class="home-content">
+      <p class="home-eyebrow">Los Angeles &nbsp;·&nbsp; Est. 2020</p>
+      <!-- One line, evenly distributed edge to edge; this masthead is the parallax element -->
+      <h1 class="home-title" id="masthead">
+        <span class="seven">7</span><span class="italic">L</span><span class="italic">'</span><span class="italic">A</span><span class="italic">N</span><span class="italic">G</span><span class="italic">E</span><span class="italic">S</span>
+      </h1>
+    </div>
+    <div class="home-bottom">
+      <p class="home-tagline">A creative media studio rooted<br>in Black cultural storytelling</p>
+      <div class="home-actions">
+        <span class="home-cta" onclick="showPage('work')">View Work</span>
+        <span class="home-cta secondary" onclick="showPage('book')">Book a Session</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORK -->
+  <div class="page" id="work">
+    <div class="section-header">
+      <h2 class="section-title">Selected Work</h2>
+      <span class="section-meta">08 Projects &nbsp;·&nbsp; 2024–2025</span>
+    </div>
+    <div class="work-grid">
+      <div class="work-item" onclick="openVideo('bzY_tyievss')">
+        <div class="work-bg" style="background-image:url('https://i.ytimg.com/vi/bzY_tyievss/hqdefault.jpg')"></div>
+        <span class="work-index">01</span>
+        <div class="work-meta">
+          <p class="work-cat">Music Video</p>
+          <p class="work-title">IAMYOURLITTLEBROTHER — Legacy</p>
+          <p class="work-yr">2024</p>
+        </div>
+      </div>
+      <div class="work-item" onclick="openVideo('IO4yvaLC0P0')">
+        <div class="work-bg" style="background-image:url('https://i.ytimg.com/vi/IO4yvaLC0P0/hqdefault.jpg')"></div>
+        <span class="work-index">02</span>
+        <div class="work-meta">
+          <p class="work-cat">Recap</p>
+          <p class="work-title">AG Club × CFG</p>
+          <p class="work-yr">2024</p>
+        </div>
+      </div>
+      <div class="work-item" onclick="openVideo('nwSC7BzZZyQ')">
+        <div class="work-bg" style="background-image:url('https://i.ytimg.com/vi/nwSC7BzZZyQ/hqdefault.jpg')"></div>
+        <span class="work-index">03</span>
+        <div class="work-meta">
+          <p class="work-cat">Music Video</p>
+          <p class="work-title">THANKYOURAVEN — I'm In Love</p>
+          <p class="work-yr">2024</p>
+        </div>
+      </div>
+      <div class="work-item" onclick="openVideo('Ly1kBKqIqHI')">
+        <div class="work-bg" style="background-image:url('https://i.ytimg.com/vi/Ly1kBKqIqHI/hqdefault.jpg')"></div>
+        <span class="work-index">04</span>
+        <div class="work-meta">
+          <p class="work-cat">Music Video</p>
+          <p class="work-title">Foe-J — Stillness In The Night</p>
+          <p class="work-yr">2024</p>
+        </div>
+      </div>
+      <div class="work-item" onclick="openVideo('1_VFGEwKUcI')">
+        <div class="work-bg" style="background-image:url('https://i.ytimg.com/vi/1_VFGEwKUcI/hqdefault.jpg')"></div>
+        <span class="work-index">05</span>
+        <div class="work-meta">
+          <p class="work-cat">Behind The Scenes</p>
+          <p class="work-title">Doechii — Live Session BTS</p>
+          <p class="work-yr">2025</p>
+        </div>
+      </div>
+      <div class="work-item" onclick="openVideo('8fYgCTmgKto')">
+        <div class="work-bg" style="background-image:url('https://i.ytimg.com/vi/8fYgCTmgKto/hqdefault.jpg')"></div>
+        <span class="work-index">06</span>
+        <div class="work-meta">
+          <p class="work-cat">Event · Documentary</p>
+          <p class="work-title">Malik Yusef's 7th Annual Grammy Brunch</p>
+          <p class="work-yr">2025</p>
+        </div>
+      </div>
+      <div class="work-item" onclick="openVideo('chvuHZYYFhM')">
+        <div class="work-bg" style="background-image:url('https://i.ytimg.com/vi/chvuHZYYFhM/hqdefault.jpg')"></div>
+        <span class="work-index">07</span>
+        <div class="work-meta">
+          <p class="work-cat">Music Video</p>
+          <p class="work-title">Nick Coleman × The Adoni — All Of My</p>
+          <p class="work-yr">2024</p>
+        </div>
+      </div>
+      <div class="work-item" onclick="openVideo('y8cGzSkezpA')">
+        <div class="work-bg" style="background-image:url('https://i.ytimg.com/vi/y8cGzSkezpA/hqdefault.jpg')"></div>
+        <span class="work-index">08</span>
+        <div class="work-meta">
+          <p class="work-cat">Behind The Scenes</p>
+          <p class="work-title">South Central Car Show</p>
+          <p class="work-yr">2025</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="page" id="about">
+    <div class="section-header">
+      <h2 class="section-title">The Studio</h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-sticky">
+        <p class="about-kicker">Our Position</p>
+        <p class="about-headline">We make work that<br><em>feels like memory</em><br>and moves like culture.</p>
+        <div class="about-divider"></div>
+        <div class="about-stats">
+          <div>
+            <p class="stat-val">8+</p>
+            <p class="stat-lbl">Projects</p>
+          </div>
+          <div>
+            <p class="stat-val">LA</p>
+            <p class="stat-lbl">Based</p>
+          </div>
+          <div>
+            <p class="stat-val lining">'20</p>
+            <p class="stat-lbl">Founded</p>
+          </div>
+        </div>
+      </div>
+      <div class="about-body-col">
+        <p>
+          <strong>7 L'ANGES is a creative media studio</strong> based in Los Angeles, built to document, amplify, and archive the artists and communities shaping culture from the ground up.
+        </p>
+        <p>
+          We specialize in film, music video, and cultural media — not as a service, but as a practice. Our work is rooted in <strong>Leimert Park, the LA underground, and the Black creative ecosystem</strong> that the rest of the industry follows years too late.
+        </p>
+        <p>
+          We are not for everyone. We work with a select number of artists, labels, and brands per year — the ones with something real to say and the commitment to say it correctly. If that's you, <span style="color:var(--white);cursor:pointer;text-decoration:underline;text-underline-offset:4px;text-decoration-color:rgba(255,255,255,0.2)" onclick="showPage('contact')">let's talk</span>.
+        </p>
+        <div class="services">
+          <div class="svc-row"><span class="svc-name">Music Video Direction</span><span class="svc-num">01</span></div>
+          <div class="svc-row"><span class="svc-name">Brand Film & Commercials</span><span class="svc-num">02</span></div>
+          <div class="svc-row"><span class="svc-name">Documentary & Events</span><span class="svc-num">03</span></div>
+          <div class="svc-row"><span class="svc-name">Cultural Archives</span><span class="svc-num">04</span></div>
+          <div class="svc-row"><span class="svc-name">Photography</span><span class="svc-num">05</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="page" id="contact">
+    <div class="section-header">
+      <h2 class="section-title">Let's Talk</h2>
+    </div>
+    <p class="contact-intro">
+      We take on <em>select projects</em> with artists, labels, and brands ready to invest in work that endures.
+    </p>
+    <div class="contact-rule">
+      <span class="contact-rule-text">Projects starting at $5,000 &nbsp;·&nbsp; Los Angeles & Beyond</span>
+      <div class="contact-rule-dot"></div>
+    </div>
+    <!-- Handled by Netlify Forms — submissions appear under Forms → "inquiry",
+         and are emailed on wherever Forms → Form notifications points. -->
+    <form id="inquiry-form" name="inquiry" method="POST"
+          data-netlify="true" netlify-honeypot="bot-field" action="/">
+      <input type="hidden" name="form-name" value="inquiry">
+      <input type="hidden" name="subject" value="New inquiry — 7 L'ANGES">
+      <p class="bk-hp">
+        <label>Leave this field empty <input name="bot-field" tabindex="-1" autocomplete="off"></label>
+      </p>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input class="form-input" type="text" name="name" placeholder="Your name" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" name="email" placeholder="your@email.com" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Project Type</label>
+          <select class="form-select" name="project_type" required>
+            <option value="" disabled selected>Select one</option>
+            <option>Music Video</option>
+            <option>Brand Film / Commercial</option>
+            <option>Documentary</option>
+            <option>Event Coverage</option>
+            <option>Photography</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Budget Range</label>
+          <select class="form-select" name="budget" required>
+            <option value="" disabled selected>Select range</option>
+            <option>$5,000 – $10,000</option>
+            <option>$10,000 – $25,000</option>
+            <option>$25,000 – $50,000</option>
+            <option>$50,000+</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group full">
+          <label class="form-label">Tell us about your project</label>
+          <textarea class="form-textarea" name="message" placeholder="What are you trying to make, and why does it matter?" required></textarea>
+        </div>
+      </div>
+      <button class="form-submit" type="submit">Submit Inquiry &nbsp;→</button>
+      <p class="bk-error" id="inquiry-error"></p>
+    </form>
+    <p class="contact-alt" id="contact-alt">
+      Know what you need already? <span onclick="showPage('book')">Book a date directly</span> —
+      discovery calls are free.
+    </p>
+  </div>
+
+  <!-- BOOK -->
+  <!-- Netlify picks the form up from this markup at deploy time, so every field
+       a submission can carry has to exist here — including the hidden ones the
+       calendar fills in. Submissions land in Netlify → Forms → "booking", and in
+       whatever inbox is set under Forms → Form notifications. -->
+  <div class="page" id="book">
+    <div class="section-header">
+      <h2 class="section-title">Book the Studio</h2>
+      <span class="section-meta" id="bk-tz-note">Los Angeles &nbsp;·&nbsp; Pacific Time</span>
+    </div>
+
+    <p class="bk-intro">
+      Pick a date and we'll hold it. Every project starts with a conversation —
+      <em>book the call free</em>, or reserve a shoot outright.
+    </p>
+
+    <div class="contact-rule">
+      <span class="contact-rule-text">Requests confirmed within 24 hours &nbsp;·&nbsp; Los Angeles &amp; Beyond</span>
+      <div class="contact-rule-dot"></div>
+    </div>
+
+    <div id="bk-flow">
+
+      <!-- 01 · SESSION TYPE -->
+      <section class="bk-step" id="step-type">
+        <div class="bk-step-head">
+          <span class="bk-step-num">01</span>
+          <span class="bk-step-title">Session Type</span>
+          <span class="bk-step-hint">Select one</span>
+        </div>
+        <div class="type-grid" id="type-grid"><!-- built by script from SESSIONS --></div>
+      </section>
+
+      <!-- 02 · DATE -->
+      <section class="bk-step locked" id="step-date">
+        <div class="bk-step-head">
+          <span class="bk-step-num">02</span>
+          <span class="bk-step-title">Date</span>
+          <span class="bk-step-hint" id="date-hint">&nbsp;</span>
+        </div>
+        <div class="cal">
+          <div class="cal-head">
+            <span class="cal-month" id="cal-month">&nbsp;</span>
+            <div class="cal-arrows">
+              <button class="cal-arrow" id="cal-prev" type="button" aria-label="Previous month">&#8592;</button>
+              <button class="cal-arrow" id="cal-next" type="button" aria-label="Next month">&#8594;</button>
+            </div>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+          <div class="cal-legend">
+            <span><i></i> Available</span>
+            <span><i class="taken"></i> Unavailable</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 · TIME -->
+      <section class="bk-step locked" id="step-time">
+        <div class="bk-step-head">
+          <span class="bk-step-num">03</span>
+          <span class="bk-step-title">Start Time</span>
+          <span class="bk-step-hint">Pacific Time</span>
+        </div>
+        <div class="slot-grid" id="slot-grid"></div>
+        <p class="bk-empty" id="slot-empty" style="display:none">
+          Nothing left on this date. Try the next one.
+        </p>
+      </section>
+
+      <!-- 04 · DETAILS -->
+      <section class="bk-step locked" id="step-details">
+        <div class="bk-step-head">
+          <span class="bk-step-num">04</span>
+          <span class="bk-step-title">Your Details</span>
+          <span class="bk-step-hint">Last step</span>
+        </div>
+
+        <form class="bk-form" id="booking-form" name="booking" method="POST"
+              data-netlify="true" netlify-honeypot="bot-field" action="/">
+
+          <input type="hidden" name="form-name" value="booking">
+          <input type="hidden" name="subject" id="f-subject" value="New booking — 7 L'ANGES">
+          <input type="hidden" name="session_type" id="f-type">
+          <input type="hidden" name="session_length" id="f-length">
+          <input type="hidden" name="session_rate" id="f-rate">
+          <input type="hidden" name="booking_date" id="f-date">
+          <input type="hidden" name="booking_time" id="f-time">
+          <input type="hidden" name="booking_when" id="f-when">
+          <p class="bk-hp">
+            <label>Leave this field empty <input name="bot-field" tabindex="-1" autocomplete="off"></label>
+          </p>
+
+          <dl class="bk-recap" id="bk-recap">
+            <div><dt>Session</dt><dd id="r-type">—</dd></div>
+            <div><dt>Date</dt><dd id="r-date">—</dd></div>
+            <div><dt>Time</dt><dd id="r-time">—</dd></div>
+            <span class="edit" onclick="bkReset()">Change &nbsp;↺</span>
+          </dl>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="f-name">Name</label>
+              <input class="form-input" id="f-name" type="text" name="name" placeholder="Your name" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="f-email">Email</label>
+              <input class="form-input" id="f-email" type="email" name="email" placeholder="your@email.com" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="f-phone">Phone</label>
+              <input class="form-input" id="f-phone" type="tel" name="phone" placeholder="For day-of contact" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="f-org">Artist / Label / Brand</label>
+              <input class="form-input" id="f-org" type="text" name="organization" placeholder="Who you represent">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="f-budget">Budget Range</label>
+              <select class="form-select" id="f-budget" name="budget" required>
+                <option value="" disabled selected>Select range</option>
+                <option>$5,000 – $10,000</option>
+                <option>$10,000 – $25,000</option>
+                <option>$25,000 – $50,000</option>
+                <option>$50,000+</option>
+                <option>Not sure yet</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="f-location">Location</label>
+              <input class="form-input" id="f-location" type="text" name="location" placeholder="Where are we shooting?">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group full">
+              <label class="form-label" for="f-project">Tell us about your project</label>
+              <textarea class="form-textarea" id="f-project" name="project" placeholder="What are you trying to make, and why does it matter?" required></textarea>
+            </div>
+          </div>
+
+          <button class="form-submit" type="submit" id="bk-submit">Request Booking &nbsp;→</button>
+
+          <p class="bk-error" id="bk-error"></p>
+
+          <p class="bk-fine">
+            Nothing is charged now. We confirm the date by email within 24 hours —
+            shoots are locked in once a 50% deposit is received.
+          </p>
+        </form>
+      </section>
+    </div>
+
+    <!-- Confirmation, shown in place of the flow once the request is in -->
+    <div class="bk-confirm" id="bk-confirm">
+      <p class="bk-confirm-mark">Request Received</p>
+      <h3>We've got your date.<br><em>Hold tight.</em></h3>
+      <p id="bk-confirm-line">&nbsp;</p>
+      <p>
+        A confirmation is on its way to your inbox. We'll come back within 24
+        hours to lock it in — if the date has moved under us, we'll offer the
+        nearest one that works.
+      </p>
+      <div class="bk-confirm-actions">
+        <a class="bk-link" id="bk-ics" download="7langes-booking.ics">Add to Calendar</a>
+        <span class="bk-link" onclick="showPage('work')">View the Work</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" onclick="closeVideo(event)">
+    <span class="lightbox-close" onclick="closeVideo(event, true)">Close &nbsp;✕</span>
+    <div class="lightbox-frame" id="lightbox-frame"></div>
+  </div>
+
+  <!-- SOCIAL + FOOTER -->
+  <div class="social-bar">
+    <a href="https://www.instagram.com/7langes.la" target="_blank">IG</a>
+    <a href="https://www.tiktok.com/@7langes" target="_blank">TT</a>
+    <a href="https://www.youtube.com/@7langes/videos" target="_blank">YT</a>
+  </div>
+  <div class="footer-line"><span class="lining">7</span> L'ANGES © 2025</div>
+
+  <script>
+    /* ─── Pages ─── */
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-links li span').forEach(el => el.classList.remove('active'));
+      const pg = document.getElementById(id);
+      if (pg) pg.classList.add('active');
+      const nav = document.getElementById('nav-' + id);
+      if (nav) nav.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    /* ─── Lightbox ─── */
+    const lb = document.getElementById('lightbox');
+    const lbFrame = document.getElementById('lightbox-frame');
+
+    function openVideo(id) {
+      lbFrame.innerHTML = '<iframe src="https://www.youtube.com/embed/' + id +
+        '?autoplay=1&rel=0&modestbranding=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeVideo(e, force) {
+      if (!force && e && e.target !== lb) return; // only close on backdrop click
+      lb.classList.remove('open');
+      lbFrame.innerHTML = '';
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeVideo(null, true);
+    });
+
+    /* ─── Thumbnail sharpener ───
+       YouTube's hqdefault is only 480px — blurry on big cells.
+       Try the full-HD maxresdefault for each video and swap it in
+       when it exists (YouTube returns a 120px stub when it doesn't). */
+    document.querySelectorAll('.work-bg[style*="i.ytimg.com"]').forEach(el => {
+      const m = el.style.backgroundImage.match(/vi\/([^/]+)\//);
+      if (!m) return;
+      const hd = 'https://i.ytimg.com/vi/' + m[1] + '/maxresdefault.jpg';
+      const probe = new Image();
+      probe.onload = () => {
+        if (probe.naturalWidth > 200) el.style.backgroundImage = 'url("' + hd + '")';
+      };
+      probe.src = hd;
+    });
+
+    /* ─── Masthead parallax ───
+       The big bottom 7 L'ANGES drifts gently opposite the cursor,
+       and eases back to center when the mouse leaves the page. */
+    const masthead = document.getElementById('masthead');
+    let tx = 0, ty = 0, cx = 0, cy = 0;
+
+    window.addEventListener('mousemove', e => {
+      const nx = (e.clientX / window.innerWidth) - 0.5;
+      const ny = (e.clientY / window.innerHeight) - 0.5;
+      tx = -nx * 26;  /* drift opposite the cursor */
+      ty = -ny * 14;
+    });
+
+    document.addEventListener('mouseleave', () => { tx = 0; ty = 0; });
+
+    (function animate() {
+      cx += (tx - cx) * 0.06;  /* eased, not 1:1 tracking */
+      cy += (ty - cy) * 0.06;
+      masthead.style.transform = 'translate(' + cx.toFixed(2) + 'px,' + cy.toFixed(2) + 'px)';
+      requestAnimationFrame(animate);
+    })();
+
+    /* ══════════════════════════════════════════
+       BOOKING
+       ══════════════════════════════════════════ */
+
+    /* ─── Everything worth changing lives in these two blocks ───
+       Availability is expressed in studio time (Pacific), whatever timezone the
+       visitor is sitting in. `lead` is the minimum notice in hours; `from`/`to`
+       are the earliest and latest start times offered; `step` is the spacing
+       between slots in minutes. */
+    const BOOKING = {
+      timezone: 'America/Los_Angeles',
+      tzLabel: 'PT',
+      openDays: [0, 1, 2, 3, 4, 5, 6],   // 0 = Sunday — weekends stay bookable
+      horizonDays: 120,                  // how far ahead the calendar opens
+      blackout: [],                      // e.g. '2026-12-24' — closes that date
+    };
+
+    const SESSIONS = [
+      {
+        id: 'call', name: 'Discovery Call',
+        length: '20 min', price: 'Free', minutes: 20,
+        lead: 48, step: 30, from: 10, to: 18,
+        desc: 'A short call to hear what you’re making and work out whether we’re the right studio for it.',
+      },
+      {
+        id: 'half', name: 'Half Day Shoot',
+        length: '5 hours', price: 'From $5,000', minutes: 300,
+        lead: 168, step: 60, from: 8, to: 15,
+        desc: 'One location, one setup. Suits performance pieces, event coverage and portrait work.',
+      },
+      {
+        id: 'full', name: 'Full Day Shoot',
+        length: '10 hours', price: 'From $8,500', minutes: 600,
+        lead: 168, step: 60, from: 6, to: 11,
+        desc: 'Multiple locations and looks. The standard shape of a music video or brand film.',
+      },
+      {
+        id: 'multi', name: 'Multi-Day / Campaign',
+        length: 'Custom', price: 'From $20,000', minutes: 600,
+        lead: 336, step: 60, from: 6, to: 11,
+        desc: 'Documentary, tour coverage or a campaign across several days. Pick day one — we’ll scope the rest together.',
+      },
+    ];
+
+    /* ─── Time helpers ───
+       All comparisons run on plain YYYYMMDDHHMM numbers in studio time, so no
+       date maths ever crosses a timezone or a daylight-saving boundary. */
+    const pad2 = n => String(n).padStart(2, '0');
+    const stamp = (y, m, d, hh, mi) => y * 1e8 + m * 1e6 + d * 1e4 + hh * 100 + mi;
+    const isoDate = (y, m, d) => y + '-' + pad2(m) + '-' + pad2(d);
+
+    function zoneParts(ts, tz) {
+      const parts = new Intl.DateTimeFormat('en-US', {
+        timeZone: tz, hour12: false,
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit',
+      }).formatToParts(new Date(ts));
+      const p = {};
+      for (const x of parts) if (x.type !== 'literal') p[x.type] = +x.value;
+      if (p.hour === 24) p.hour = 0;   // some engines render midnight as hour 24
+      return p;
+    }
+
+    /* The zone's offset from UTC at a given instant, in ms. */
+    function zoneOffset(ts, tz) {
+      const p = zoneParts(ts, tz);
+      return Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute) - (Math.floor(ts / 60000) * 60000);
+    }
+
+    /* Studio wall-clock → a real instant. Two passes settle the DST edge, where
+       the offset that applies depends on the answer we're still solving for. */
+    function studioInstant(y, m, d, hh, mi) {
+      const wall = Date.UTC(y, m - 1, d, hh, mi);
+      let ts = wall;
+      for (let i = 0; i < 2; i++) ts = wall - zoneOffset(ts, BOOKING.timezone);
+      return ts;
+    }
+
+    const nowStudio = () => zoneParts(Date.now(), BOOKING.timezone);
+    const earliestStamp = s => {
+      const p = zoneParts(Date.now() + s.lead * 3600e3, BOOKING.timezone);
+      return stamp(p.year, p.month, p.day, p.hour, p.minute);
+    };
+
+    const timeLabel = (hh, mi) =>
+      (hh % 12 === 0 ? 12 : hh % 12) + ':' + pad2(mi) + ' ' + (hh >= 12 ? 'PM' : 'AM');
+
+    const dateLabel = (y, m, d) => new Date(y, m - 1, d)
+      .toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+    /* ─── State ─── */
+    const bk = { session: null, date: null, time: null, view: null };
+
+    const el = id => document.getElementById(id);
+
+    /* Locking dims a step and takes it out of reach — `inert` matters as much as
+       the class, or a keyboard can still tab into a step that isn't open yet. */
+    function lock(id, on) {
+      const node = el(id);
+      node.classList.toggle('locked', on);
+      node.inert = on;
+    }
+
+    const scrollToStep = node => {
+      const y = node.getBoundingClientRect().top + window.pageYOffset - 96;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    };
+
+    /* ─── Availability ─── */
+    function slotsFor(y, m, d, s) {
+      if (!s) return [];
+      if (BOOKING.blackout.includes(isoDate(y, m, d))) return [];
+      if (!BOOKING.openDays.includes(new Date(y, m - 1, d).getDay())) return [];
+
+      const floor = earliestStamp(s);
+      const now = nowStudio();
+      const ceiling = (() => {
+        const last = new Date(now.year, now.month - 1, now.day + BOOKING.horizonDays);
+        return stamp(last.getFullYear(), last.getMonth() + 1, last.getDate(), 23, 59);
+      })();
+
+      const out = [];
+      for (let mins = s.from * 60; mins <= s.to * 60; mins += s.step) {
+        const hh = Math.floor(mins / 60), mi = mins % 60;
+        const at = stamp(y, m, d, hh, mi);
+        if (at < floor || at > ceiling) continue;
+        out.push({ hh, mi });
+      }
+      return out;
+    }
+
+    const dayOpen = (y, m, d, s) => slotsFor(y, m, d, s).length > 0;
+
+    /* ─── 01 · Session type ─── */
+    function renderTypes() {
+      el('type-grid').innerHTML = SESSIONS.map((s, i) => `
+          <button type="button" class="type-card" data-id="${s.id}" onclick="pickType('${s.id}')">
+            <span class="t-num">${pad2(i + 1)}</span>
+            <p class="t-name">${s.name}</p>
+            <p class="t-desc">${s.desc}</p>
+            <div class="t-foot">
+              <span class="t-meta">${s.length}</span>
+              <span class="t-price">${s.price}</span>
+            </div>
+          </button>`).join('');
+    }
+
+    function pickType(id) {
+      bk.session = SESSIONS.find(s => s.id === id);
+      bk.date = bk.time = null;
+
+      document.querySelectorAll('.type-card')
+        .forEach(c => c.classList.toggle('sel', c.dataset.id === id));
+
+      el('date-hint').textContent = bk.session.lead >= 168
+        ? Math.round(bk.session.lead / 24) + ' days’ notice'
+        : bk.session.lead + ' hours’ notice';
+
+      lock('step-date', false);
+      lock('step-time', true);
+      lock('step-details', true);
+      el('slot-grid').innerHTML = '';
+
+      bk.view = firstOpenMonth();
+      renderCalendar();
+      syncRecap();
+      scrollToStep(el('step-date'));
+    }
+
+    /* Open the calendar on the first month that actually has a free date —
+       with a week of lead time, that is often not this month. */
+    function firstOpenMonth() {
+      const now = nowStudio();
+      let y = now.year, m = now.month;
+      for (let i = 0; i < 6; i++) {
+        const days = new Date(y, m, 0).getDate();
+        for (let d = 1; d <= days; d++) if (dayOpen(y, m, d, bk.session)) return { y, m };
+        m++; if (m > 12) { m = 1; y++; }
+      }
+      return { y: now.year, m: now.month };
+    }
+
+    /* ─── 02 · Date ─── */
+    function renderCalendar() {
+      const { y, m } = bk.view;
+      el('cal-month').textContent =
+        new Date(y, m - 1, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+      const cells = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+        .map(d => `<span class="cal-dow">${d}</span>`);
+
+      const lead = new Date(y, m - 1, 1).getDay();
+      for (let i = 0; i < lead; i++) cells.push('<span class="cal-day pad"></span>');
+
+      const days = new Date(y, m, 0).getDate();
+      for (let d = 1; d <= days; d++) {
+        const open = dayOpen(y, m, d, bk.session);
+        const on = bk.date && bk.date.y === y && bk.date.m === m && bk.date.d === d;
+        const cls = 'cal-day ' + (on ? 'sel' : open ? 'avail' : 'off');
+        cells.push(open
+          ? `<button type="button" class="${cls}" onclick="pickDate(${y},${m},${d})"
+               aria-label="${dateLabel(y, m, d)}">${d}</button>`
+          : `<span class="${cls}">${d}</span>`);
+      }
+      el('cal-grid').innerHTML = cells.join('');
+
+      const now = nowStudio();
+      el('cal-prev').disabled = (y === now.year && m === now.month);
+      const limit = new Date(now.year, now.month - 1 + 5, 1);
+      el('cal-next').disabled = new Date(y, m - 1, 1) >= limit;
+    }
+
+    function shiftMonth(step) {
+      let { y, m } = bk.view;
+      m += step;
+      if (m < 1) { m = 12; y--; } else if (m > 12) { m = 1; y++; }
+      bk.view = { y, m };
+      renderCalendar();
+    }
+
+    function pickDate(y, m, d) {
+      bk.date = { y, m, d };
+      bk.time = null;
+      renderCalendar();
+      renderSlots();
+      lock('step-time', false);
+      lock('step-details', true);
+      syncRecap();
+      scrollToStep(el('step-time'));
+    }
+
+    /* ─── 03 · Time ─── */
+    function renderSlots() {
+      const list = slotsFor(bk.date.y, bk.date.m, bk.date.d, bk.session);
+      el('slot-empty').style.display = list.length ? 'none' : 'block';
+      el('slot-grid').innerHTML = list.map(t => `
+          <button type="button" class="slot" data-t="${t.hh}:${t.mi}"
+                  onclick="pickTime(${t.hh},${t.mi})">${timeLabel(t.hh, t.mi)}</button>`).join('');
+    }
+
+    function pickTime(hh, mi) {
+      bk.time = { hh, mi };
+      document.querySelectorAll('.slot')
+        .forEach(b => b.classList.toggle('sel', b.dataset.t === hh + ':' + mi));
+      lock('step-details', false);
+      syncRecap();
+      scrollToStep(el('step-details'));
+    }
+
+    /* ─── 04 · Details ─── */
+    /* Mirror the choices into the recap and into the hidden fields that ride
+       along with the submission. */
+    function syncRecap() {
+      const s = bk.session, d = bk.date, t = bk.time;
+
+      el('r-type').textContent = s ? s.name : '—';
+      el('r-date').textContent = d ? dateLabel(d.y, d.m, d.d) : '—';
+      el('r-time').textContent = t ? timeLabel(t.hh, t.mi) + ' ' + BOOKING.tzLabel + localNote() : '—';
+
+      el('f-type').value = s ? s.name : '';
+      el('f-length').value = s ? s.length : '';
+      el('f-rate').value = s ? s.price : '';
+      el('f-date').value = d ? isoDate(d.y, d.m, d.d) : '';
+      el('f-time').value = t ? timeLabel(t.hh, t.mi) + ' ' + BOOKING.tzLabel : '';
+      el('f-when').value = (s && d && t)
+        ? s.name + ' · ' + dateLabel(d.y, d.m, d.d) + ' · ' + timeLabel(t.hh, t.mi) + ' ' + BOOKING.tzLabel
+        : '';
+      el('f-subject').value = (s && d && t)
+        ? 'Booking request — ' + s.name + ' — ' + isoDate(d.y, d.m, d.d) + ' ' + timeLabel(t.hh, t.mi) + ' ' + BOOKING.tzLabel
+        : 'New booking — 7 L’ANGES';
+    }
+
+    /* If the visitor isn't on Pacific time, say what the slot is where they are. */
+    function localNote() {
+      const here = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (!here || here === BOOKING.timezone || !bk.date || !bk.time) return '';
+      const ts = studioInstant(bk.date.y, bk.date.m, bk.date.d, bk.time.hh, bk.time.mi);
+      const mine = new Intl.DateTimeFormat('en-US', {
+        hour: 'numeric', minute: '2-digit', timeZone: here,
+      }).format(new Date(ts));
+      return '  (' + mine + ' your time)';
+    }
+
+    function bkReset() {
+      bk.session = bk.date = bk.time = null;
+      document.querySelectorAll('.type-card.sel').forEach(c => c.classList.remove('sel'));
+      ['step-date', 'step-time', 'step-details'].forEach(id => lock(id, true));
+      el('slot-grid').innerHTML = '';
+      el('bk-error').classList.remove('on');
+      syncRecap();
+      scrollToStep(el('step-type'));
+    }
+
+    /* ─── Submission ───
+       Posted straight to Netlify Forms, so the confirmation stays in-page
+       instead of bouncing the visitor to a generic success screen. */
+    function postForm(form) {
+      return fetch(form.getAttribute('action') || '/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(new FormData(form)).toString(),
+      }).then(res => {
+        if (!res.ok) throw new Error('Submission failed (' + res.status + ')');
+        return res;
+      });
+    }
+
+    const failLine = 'That didn’t send. Please try once more — or reach us on Instagram ' +
+      '<a href="https://www.instagram.com/7langes.la" target="_blank" rel="noopener" ' +
+      'style="color:inherit">@7langes.la</a> and we’ll pick it up from there.';
+
+    el('booking-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const form = e.target, btn = el('bk-submit'), err = el('bk-error');
+
+      if (!bk.session || !bk.date || !bk.time) {
+        err.innerHTML = 'Pick a session, a date and a time first.';
+        err.classList.add('on');
+        return;
+      }
+      err.classList.remove('on');
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+
+      postForm(form)
+        .then(() => {
+          el('bk-flow').style.display = 'none';
+          el('bk-confirm').classList.add('on');
+          el('bk-confirm-line').textContent =
+            bk.session.name + ' · ' + dateLabel(bk.date.y, bk.date.m, bk.date.d) +
+            ' · ' + timeLabel(bk.time.hh, bk.time.mi) + ' ' + BOOKING.tzLabel + '.';
+          buildIcs();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        })
+        .catch(() => {
+          err.innerHTML = failLine;
+          err.classList.add('on');
+          btn.disabled = false;
+          btn.innerHTML = 'Request Booking &nbsp;→';
+        });
+    });
+
+    el('inquiry-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const form = e.target;
+      const btn = form.querySelector('.form-submit');
+      const err = el('inquiry-error');
+
+      err.classList.remove('on');
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+
+      postForm(form)
+        .then(() => {
+          form.reset();
+          btn.textContent = 'Inquiry Sent — Thank You';
+          el('contact-alt').innerHTML =
+            'We’ve got it, and we’ll come back to you within 24 hours. ' +
+            'In a hurry? <span onclick="showPage(\'book\')">Book a call directly</span>.';
+        })
+        .catch(() => {
+          err.innerHTML = failLine;
+          err.classList.add('on');
+          btn.disabled = false;
+          btn.innerHTML = 'Submit Inquiry &nbsp;→';
+        });
+    });
+
+    /* ─── Calendar file for the confirmation screen ─── */
+    function buildIcs() {
+      const start = studioInstant(bk.date.y, bk.date.m, bk.date.d, bk.time.hh, bk.time.mi);
+      const end = start + bk.session.minutes * 60000;
+      const utc = ts => new Date(ts).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+      const ics = [
+        'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//7 LANGES//Booking//EN',
+        'BEGIN:VEVENT',
+        'UID:' + Date.now() + '@7-langes.com',
+        'DTSTAMP:' + utc(Date.now()),
+        'DTSTART:' + utc(start),
+        'DTEND:' + utc(end),
+        'SUMMARY:7 L’ANGES — ' + bk.session.name,
+        'DESCRIPTION:Requested via 7-langes.com. Pending confirmation from the studio.',
+        'LOCATION:Los Angeles',
+        'END:VEVENT', 'END:VCALENDAR',
+      ].join('\r\n');
+      el('bk-ics').href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
+    }
+
+    /* ─── Boot ─── */
+    renderTypes();
+    ['step-date', 'step-time', 'step-details'].forEach(id => lock(id, true));
+    el('cal-prev').addEventListener('click', () => shiftMonth(-1));
+    el('cal-next').addEventListener('click', () => shiftMonth(1));
+    (function tzNote() {
+      const here = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (here && here !== BOOKING.timezone) {
+        el('bk-tz-note').innerHTML =
+          'All times Pacific &nbsp;·&nbsp; your local time shown alongside';
+      }
+    })();
+  </script>
+</body>
+</html>
