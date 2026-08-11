@@ -77,6 +77,23 @@ half-filled. Every submission carries the session type, the date, and the time a
 separate fields, plus a `booking_when` line that reads as one sentence — the
 notification email is legible without opening the dashboard.
 
+## The studio page
+
+`studio.html` is the internal side, built for a phone. Two tabs:
+
+- **Bookings** — every request, newest first, straight out of Netlify Forms.
+  Anything you have not looked at on that device is flagged **New**, and the
+  tab carries a count. Email and phone are tap-to-contact. Discovery calls are
+  marked as nothing to invoice, since they are free.
+- **Invoices** — the deposit and balance screen described below.
+
+Tapping **Invoice this** on a booking fills the invoice tab in for you, so the
+path from "a request came in" to "they have been invoiced" is two taps and a
+glance at the total.
+
+The page is `noindex`, and every request it makes is refused without the studio
+key. Your key is remembered on your own device after the first time.
+
 ## Getting paid
 
 Money is collected **after** you confirm the date, not at booking. A client can
@@ -94,8 +111,10 @@ The terms the page now states, and the code enforces:
 
 1. Client books. Nothing is charged; you get the request by email.
 2. You confirm the date works.
-3. Open **7-langes.com/studio.html** on your phone, fill in six fields, tap
-   **Create & Send**.
+3. Open **7-langes.com/studio.html** on your phone. The **Bookings** tab lists
+   every request that has come in; tap **Invoice this** on one and it carries
+   the client, session, date and call time straight into the invoice screen.
+   Check the total, tap **Create & Send**.
 4. Stripe emails the client both invoices. The deposit is payable now; the
    balance carries its own due date and Stripe chases it for you.
 
@@ -112,6 +131,10 @@ amount — there is no room for a staged balance, so the code stops trying.
    | ------------------- | ----------------------------------------------------- |
    | `STRIPE_SECRET_KEY` | `sk_test_…` to trial it, `sk_live_…` when you're ready |
    | `STUDIO_KEY`        | any long random string — your password for studio.html |
+   | `NETLIFY_API_TOKEN` | a token from Netlify → User settings → Applications  |
+
+   The third one is what lets the Bookings tab read your form submissions back.
+   Without it the invoice side still works; the list just cannot load.
 
 3. Redeploy so the function picks the variables up.
 
