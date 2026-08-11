@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>7 L'ANGES — Studio</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --black:#080808; --white:#ece8e1; --gray:#555; }
+    html, body {
+      background: var(--black); color: var(--white);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 15px; line-height: 1.6; letter-spacing: 0.02em;
+      min-height: 100vh; -webkit-text-size-adjust: 100%;
+    }
+    .wrap { max-width: 520px; margin: 0 auto; padding: 40px 22px 80px; }
+    h1 {
+      font-family: Georgia, serif; font-weight: 300; font-size: 26px;
+      letter-spacing: 0.04em; margin-bottom: 6px;
+    }
+    .sub {
+      font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
+      color: var(--gray); margin-bottom: 34px;
+    }
+    label {
+      display: block; font-size: 9px; letter-spacing: 0.26em;
+      text-transform: uppercase; color: var(--gray); margin: 22px 0 8px;
+    }
+    input, select {
+      width: 100%; background: transparent; border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.14);
+      padding: 11px 0; color: var(--white); font: inherit; font-size: 16px;
+      outline: none; border-radius: 0; -webkit-appearance: none;
+    }
+    /* 16px above keeps iOS from zooming the page on focus */
+    select option { background: #111; }
+    input:focus, select:focus { border-bottom-color: rgba(236,232,225,0.5); }
+    .row { display: flex; gap: 16px; }
+    .row > div { flex: 1; }
+    button {
+      width: 100%; margin-top: 38px; background: var(--white); color: #080808;
+      border: none; padding: 18px; font: inherit; font-size: 11px;
+      letter-spacing: 0.22em; text-transform: uppercase; cursor: pointer;
+      border-radius: 0;
+    }
+    button:disabled { opacity: 0.45; }
+    .split {
+      margin-top: 26px; padding: 16px 18px; border: 1px solid rgba(255,255,255,0.1);
+      font-size: 12px; color: #8a8a8a; line-height: 2;
+    }
+    .split b { color: var(--white); font-weight: 400; }
+    .out { margin-top: 30px; display: none; }
+    .out.on { display: block; }
+    .card {
+      border: 1px solid rgba(255,255,255,0.14); padding: 18px; margin-bottom: 12px;
+    }
+    .card .lbl {
+      font-size: 9px; letter-spacing: 0.24em; text-transform: uppercase;
+      color: var(--gray); margin-bottom: 8px;
+    }
+    .card .amt { font-family: Georgia, serif; font-size: 24px; margin-bottom: 4px; }
+    .card .due { font-size: 11px; color: #8a8a8a; margin-bottom: 12px; }
+    .card a { color: var(--white); font-size: 11px; letter-spacing: 0.14em; word-break: break-all; }
+    .msg { margin-top: 24px; font-size: 12px; line-height: 1.9; display: none; }
+    .msg.on { display: block; }
+    .msg.bad { color: #c98b7a; }
+    .msg.good { color: #8fae8f; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Send Invoices</h1>
+    <p class="sub">Studio only · after you confirm the date</p>
+
+    <label for="key">Studio Key</label>
+    <input id="key" type="password" autocomplete="current-password" placeholder="Saved on this device after the first time">
+
+    <label for="cname">Client Name</label>
+    <input id="cname" type="text" autocomplete="off">
+
+    <label for="cemail">Client Email</label>
+    <input id="cemail" type="email" autocomplete="off" placeholder="Where the invoice goes">
+
+    <label for="stype">Session</label>
+    <select id="stype">
+      <option value="Half Day Shoot" data-base="5000">Half Day Shoot — from $5,000</option>
+      <option value="Full Day Shoot" data-base="8500">Full Day Shoot — from $8,500</option>
+      <option value="Multi-Day / Campaign" data-base="20000">Multi-Day / Campaign — from $20,000</option>
+    </select>
+
+    <div class="row">
+      <div>
+        <label for="sdate">Shoot Date</label>
+        <input id="sdate" type="date">
+      </div>
+      <div>
+        <label for="stime">Call Time</label>
+        <select id="stime">
+          <option>6:00 AM</option><option>7:00 AM</option><option selected>8:00 AM</option>
+          <option>9:00 AM</option><option>10:00 AM</option><option>11:00 AM</option>
+          <option>12:00 PM</option><option>2:00 PM</option>
+        </select>
+      </div>
+    </div>
+
+    <label for="total">Agreed Total (USD)</label>
+    <input id="total" type="number" min="1" step="1" inputmode="decimal">
+
+    <div class="split" id="split"></div>
+
+    <button id="go">Create &amp; Send &nbsp;→</button>
+
+    <p class="msg" id="msg"></p>
+
+    <div class="out" id="out"></div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const dollars = n => '$' + n.toLocaleString('en-US');
+
+    // Remember the key on this device so it is typed once, not every booking.
+    $('key').value = localStorage.getItem('studioKey') || '';
+
+    function syncSplit() {
+      const total = Number($('total').value) || 0;
+      const dep = Math.round(total / 2);
+      $('split').innerHTML = total
+        ? `<b>${dollars(dep)}</b> now to lock the date<br>
+           <b>${dollars(total - dep)}</b> due 72 hours before the shoot`
+        : 'Enter a total to see the split.';
+    }
+
+    function prefillTotal() {
+      const opt = $('stype').selectedOptions[0];
+      $('total').value = opt.dataset.base;
+      syncSplit();
+    }
+
+    $('stype').addEventListener('change', prefillTotal);
+    $('total').addEventListener('input', syncSplit);
+    prefillTotal();
+
+    $('go').addEventListener('click', async () => {
+      const msg = $('msg'), out = $('out'), btn = $('go');
+      msg.className = 'msg'; out.className = 'out'; out.innerHTML = '';
+
+      const key = $('key').value.trim();
+      const body = {
+        clientName: $('cname').value.trim(),
+        clientEmail: $('cemail').value.trim(),
+        sessionType: $('stype').value,
+        shootDate: $('sdate').value,
+        shootTime: $('stime').value,
+        totalDollars: $('total').value,
+      };
+
+      if (!key || !body.clientEmail || !body.shootDate || !body.totalDollars) {
+        msg.textContent = 'Studio key, client email, shoot date and total are all needed.';
+        msg.className = 'msg bad on';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+
+      try {
+        const res = await fetch('/.netlify/functions/create-invoices', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-studio-key': key },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Something went wrong.');
+
+        localStorage.setItem('studioKey', key);
+
+        msg.textContent = data.note || 'Sent. The client has the invoice in their inbox.';
+        msg.className = 'msg good on';
+
+        out.innerHTML = data.invoices.map(i => `
+          <div class="card">
+            <p class="lbl">${i.label}</p>
+            <p class="amt">${i.amount}</p>
+            ${i.due ? `<p class="due">Due ${i.due}</p>` : ''}
+            <a href="${i.url}" target="_blank" rel="noopener">${i.url}</a>
+          </div>`).join('');
+        out.className = 'out on';
+      } catch (err) {
+        msg.textContent = err.message;
+        msg.className = 'msg bad on';
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Create &amp; Send &nbsp;→';
+      }
+    });
+  </script>
+</body>
+</html>

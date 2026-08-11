@@ -77,6 +77,65 @@ half-filled. Every submission carries the session type, the date, and the time a
 separate fields, plus a `booking_when` line that reads as one sentence — the
 notification email is legible without opening the dashboard.
 
+## Getting paid
+
+Money is collected **after** you confirm the date, not at booking. A client can
+request a slot you have already given away; charging first would mean refunding
+them, and Stripe does not always return its fee on a refund.
+
+The terms the page now states, and the code enforces:
+
+- **50%** to lock the date, invoiced as soon as you confirm.
+- **Balance** due automatically **72 hours before** the call time.
+- Card, Apple Pay, Google Pay and **ACH bank transfer** all accepted.
+- Discovery calls are free and never invoiced.
+
+### The flow
+
+1. Client books. Nothing is charged; you get the request by email.
+2. You confirm the date works.
+3. Open **7-langes.com/studio.html** on your phone, fill in six fields, tap
+   **Create & Send**.
+4. Stripe emails the client both invoices. The deposit is payable now; the
+   balance carries its own due date and Stripe chases it for you.
+
+Booking a shoot inside 72 hours collapses to a single invoice for the full
+amount — there is no room for a staged balance, so the code stops trying.
+
+### One-time setup
+
+1. Create a Stripe account and, in the Stripe dashboard, turn on **ACH Direct
+   Debit** under Settings → Payment methods.
+2. Netlify → Site configuration → **Environment variables**, add two:
+
+   | Variable            | Value                                                 |
+   | ------------------- | ----------------------------------------------------- |
+   | `STRIPE_SECRET_KEY` | `sk_test_…` to trial it, `sk_live_…` when you're ready |
+   | `STUDIO_KEY`        | any long random string — your password for studio.html |
+
+3. Redeploy so the function picks the variables up.
+
+The secret key lives only in Netlify's environment and is read server-side by
+`netlify/functions/create-invoices.mjs`. It never appears in the HTML and is
+never sent to a browser. `studio.html` is `noindex` and its every action is
+rejected without the studio key.
+
+**Trial it first.** With `sk_test_…` set, run a booking through end to end —
+Stripe's test mode issues real-looking invoices that charge nothing. Swap to
+`sk_live_…` only once you have seen the emails land.
+
+### Changing the terms
+
+At the top of `netlify/functions/create-invoices.mjs`:
+
+```js
+const PAY_METHODS = ['card', 'us_bank_account'];   // drop ACH by removing the second
+const BALANCE_DUE_HOURS = 72;                      // when the balance falls due
+```
+
+The 50/50 split is one line further down (`total / 2`); the halves are computed
+so odd totals never lose a cent.
+
 ## Changing availability
 
 Everything adjustable sits in two blocks near the top of the `BOOKING` script,

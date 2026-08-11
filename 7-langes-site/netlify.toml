@@ -14,3 +14,16 @@
   [headers.values]
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+
+# The studio invoicing page is not for clients — keep it out of search results.
+# The real protection is the studio key the function checks; this is just hygiene.
+[[headers]]
+  for = "/studio.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+# publish = "." would otherwise serve the function source as a static file.
+[[redirects]]
+  from = "/netlify/*"
+  status = 404
+  to = "/index.html"
